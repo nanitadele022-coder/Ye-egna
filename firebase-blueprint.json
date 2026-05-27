@@ -1,0 +1,82 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "The profile of husband or wife in YeEgna.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique user ID from Firebase Auth." },
+        "displayName": { "type": "string", "description": "The name of the user." },
+        "role": { "type": "string", "enum": ["husband", "wife"], "description": "The user's role in the couple." },
+        "partnerUid": { "type": "string", "description": "The partner's user ID." },
+        "coupleCode": { "type": "string", "description": "Unique code shared by the couple." },
+        "joinedAt": { "type": "string", "format": "date-time", "description": "When the user registered." }
+      },
+      "required": ["uid", "displayName", "role"]
+    },
+    "MoneyActivity": {
+      "title": "Money Activity",
+      "description": "Represents money in or money out (transactions).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique activity ID." },
+        "amount": { "type": "number", "description": "Amount in ETB/Birr." },
+        "type": { "type": "string", "enum": ["in", "out"], "description": "Income (in) or Expense (out)." },
+        "category": { "type": "string", "enum": ["Food", "Transport", "Shopping", "Rent", "Internet", "Entertainment", "Gifts", "Bills", "Healthcare", "Emergency", "Other"], "description": "The category of spending." },
+        "date": { "type": "string", "format": "date", "description": "The date of the activity." },
+        "notes": { "type": "string", "description": "Notes describing the activity." },
+        "scope": { "type": "string", "enum": ["personal", "shared"], "description": "Whether My Money or Our Money." },
+        "by": { "type": "string", "enum": ["husband", "wife"], "description": "Who attributed this activity." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "System creation timestamp." },
+        "coupleCode": { "type": "string", "description": "Shared couple code mapping to the couple." }
+      },
+      "required": ["id", "amount", "type", "category", "date", "scope", "by", "coupleCode"]
+    },
+    "DreamGoal": {
+      "title": "Dream Goal",
+      "description": "Represents savings goals (Emergency Fund, Baby Fund, House Fund, etc.).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique goal ID." },
+        "title": { "type": "string", "description": "The title of the dream goal." },
+        "targetAmount": { "type": "number", "description": "The total target amount in ETB." },
+        "savedAmount": { "type": "number", "description": "The amount currently saved in ETB." },
+        "deadline": { "type": "string", "format": "date", "description": "The deadline date." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Goal creation timestamp." },
+        "isCompleted": { "type": "boolean", "description": "Whether the goal is completed." },
+        "coupleCode": { "type": "string", "description": "Shared couple code mapping to the couple." }
+      },
+      "required": ["id", "title", "targetAmount", "savedAmount", "isCompleted", "coupleCode"]
+    },
+    "SpendingPlan": {
+      "title": "Spending Plan",
+      "description": "Represents monthly category budget limits.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Structured as coupleCode_monthYyyy." },
+        "coupleCode": { "type": "string", "description": "Shared couple code." },
+        "monthYyyy": { "type": "string", "description": "Year and month (e.g. 2026-05)." },
+        "limits": { "type": "object", "description": "Map from category name to limit in ETB." }
+      },
+      "required": ["id", "coupleCode", "monthYyyy", "limits"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Stores user authentication profiles and couple links."
+    },
+    "/couples/{coupleCode}/activities/{id}": {
+      "schema": "MoneyActivity",
+      "description": "Stores money activities (money in and money out) for each couple."
+    },
+    "/couples/{coupleCode}/goals/{id}": {
+      "schema": "DreamGoal",
+      "description": "Stores savings dream goals for each couple."
+    },
+    "/couples/{coupleCode}/spendingPlans/{id}": {
+      "schema": "SpendingPlan",
+      "description": "Stores category spending plans/limits per couple."
+    }
+  }
+}
